@@ -8,16 +8,16 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 }
 
 // Permitimos unicamente peticiones con ajax
-if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-    http_response_code(405);
+if (!(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) {
+    http_response_code(403);
     echo "acceso restringido";
     exit();
 }
 
 define('DEBUG', false);
 define('MAIL_HOST', 'smtp.mailtrap.io');
-define('MAIL_USER', 'c5b44a87c035e8');
-define('MAIL_PASS', 'a6517fd8213436');
+define('MAIL_USER', '8c97e1217ff34d');
+define('MAIL_PASS', 'ed512ab7dd4b51');
 define('MAIL_PORT', '25');
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -45,7 +45,7 @@ try {
     $mail->addReplyTo($_POST['email'], $_POST['name']);
 
     // Content
-    $mail->isHTML(false);                                  // Set email format to HTML
+    $mail->isHTML(false);                                       // Set email format to HTML
     $mail->Subject = "Nuevo Mensaje - {$_POST['subject']}";
     $mail->Body    = $_POST['body'];
     $mail->AltBody = $_POST['body'];

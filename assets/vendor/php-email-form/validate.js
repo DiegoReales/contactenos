@@ -109,17 +109,7 @@
     this_form.find('.error-message').slideUp();
     this_form.find('.loading').slideDown();
 
-    if ( $(this).data('recaptcha-site-key') ) {
-      var recaptcha_site_key = $(this).data('recaptcha-site-key');
-      grecaptcha.ready(function() {
-        grecaptcha.execute(recaptcha_site_key, {action: 'php_email_form_submit'}).then(function(token) {
-          php_email_form_submit(this_form,action,this_form.serialize() + '&recaptcha-response=' + token);
-        });
-      });
-    } else {
-      php_email_form_submit(this_form,action,this_form.serialize());
-    }
-    
+    php_email_form_submit(this_form,action,this_form.serialize());    
     return true;
   });
 
@@ -128,18 +118,18 @@
       type: "POST",
       url: action,
       data: data,
-      timeout: 40000
-    }).done( function(msg){
-      if (msg == 'OK') {
+      timeout: 40000,
+      dataType: "json",
+    }).done(function(res){
+      console.log(res);
+      if (res.success == true) {
         this_form.find('.loading').slideUp();
         this_form.find('.sent-message').slideDown();
         this_form.find("input:not(input[type=submit]), textarea").val('');
       } else {
         this_form.find('.loading').slideUp();
-        if(!msg) {
-          msg = 'Hubo un error en el envio del formulario, no se pudo devolver mensaje desde ' + action + '<br>';
-        }
-        this_form.find('.error-message').slideDown().html(msg);
+        const message_default = 'Hubo un error en el envio del formulario, no se pudo devolver mensaje desde ' + action + '<br>';
+        this_form.find('.error-message').slideDown().html(res.message || message_default);
       }
     }).fail( function(data){
       console.log(data);
