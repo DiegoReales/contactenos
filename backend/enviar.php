@@ -29,6 +29,10 @@ require './vendor/autoload.php';
 $mail = new PHPMailer(true);
 
 try {
+    foreach ($_POST as $key => $value) {
+        $_POST[$key] = utf8_decode($value);
+    }
+
     // Parametros de Servidor SMTP
     if (DEBUG) $mail->SMTPDebug = SMTP::DEBUG_SERVER;           // Enable verbose debug output
     $mail->isSMTP();                                            // Send using SMTP
@@ -38,10 +42,9 @@ try {
     $mail->Password   = MAIL_PASS;                              // SMTP password
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
     $mail->Port       = MAIL_PORT;                              // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
-
     //Recipients
-    $mail->setFrom('contacto@example.com', 'Pagina Web');
-    $mail->addAddress('joe@example.net', 'Joe User');           // Add a recipient, Name is optional
+    $mail->setFrom($_POST['email'], $_POST['name']);
+    $mail->addAddress('diego.reales@hotmail.com', 'Diego Reales');           // Add a recipient, Name is optional
     $mail->addReplyTo($_POST['email'], $_POST['name']);
 
     // Content
